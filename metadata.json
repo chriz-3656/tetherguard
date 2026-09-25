@@ -1,0 +1,6 @@
+{
+  "name": "TetherGuard",
+  "description": "Android companion security control center for TetherGuard laptop tamper protection and remote incident response.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
