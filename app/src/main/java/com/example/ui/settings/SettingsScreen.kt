@@ -61,17 +61,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.models.PairedDevice
 import com.example.data.storage.SecureStorage
-import com.example.ui.theme.CyberAlertRed
-import com.example.ui.theme.CyberAlertRedContainer
-import com.example.ui.theme.CyberBorder
-import com.example.ui.theme.CyberPrimary
-import com.example.ui.theme.CyberProtectedGreen
-import com.example.ui.theme.CyberSurface
-import com.example.ui.theme.CyberSurfaceHighlight
-import com.example.ui.theme.CyberSurfaceVariant
-import com.example.ui.theme.CyberTextPrimary
-import com.example.ui.theme.CyberTextSecondary
-import com.example.ui.theme.CyberTextTertiary
+import com.example.ui.theme.Cobalt500
+import com.example.ui.theme.Cobalt600
+import com.example.ui.theme.Crimson500
+import com.example.ui.theme.Emerald400
+import com.example.ui.theme.Slate700
+import com.example.ui.theme.Slate800
+import com.example.ui.theme.Slate850
+import com.example.ui.theme.Slate900
+import com.example.ui.theme.Slate950
+import com.example.ui.theme.TextPrimary
+import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.TextTertiary
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -101,45 +102,52 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "SECURITY SETTINGS",
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        letterSpacing = 1.sp
-                    )
+                    Column {
+                        Text(
+                            text = "Security & Settings",
+                            color = TextPrimary,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            letterSpacing = (-0.2).sp
+                        )
+                        Text(
+                            text = "Cryptographic credentials & preferences",
+                            color = TextSecondary,
+                            fontSize = 11.sp
+                        )
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack, modifier = Modifier.testTag("settings_back_btn")) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = CyberTextPrimary
+                            tint = TextPrimary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CyberSurface,
-                    titleContentColor = CyberTextPrimary
+                    containerColor = Slate950,
+                    titleContentColor = TextPrimary
                 )
             )
         },
-        containerColor = CyberSurface
+        containerColor = Slate950
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Section 1: Paired Device
+            // Group 1: Paired Workstation
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = CyberSurfaceVariant),
-                border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Slate900),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -149,19 +157,19 @@ fun SettingsScreen(
                     ) {
                         Text(
                             text = "PAIRED WORKSTATION",
-                            color = CyberTextTertiary,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Monospace
+                            color = TextSecondary,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 0.5.sp
                         )
                         if (pairedDevice != null) {
                             Surface(
                                 shape = RoundedCornerShape(4.dp),
-                                color = CyberProtectedGreen.copy(alpha = 0.15f)
+                                color = Color(0x1F10B981)
                             ) {
                                 Text(
                                     text = "ENCRYPTED SESSION",
-                                    color = CyberProtectedGreen,
+                                    color = Emerald400,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
                                     fontFamily = FontFamily.Monospace,
@@ -171,16 +179,16 @@ fun SettingsScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     if (pairedDevice != null) {
                         SettingsRow("Device Name", pairedDevice.deviceName)
-                        SettingsRow("Device ID", pairedDevice.deviceId)
+                        SettingsRow("Hardware ID", pairedDevice.deviceId)
                         SettingsRow(
-                            "Paired Timestamp",
+                            "Pairing Time",
                             SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(pairedDevice.pairedAt))
                         )
-                        SettingsRow("Public Key Fingerprint", pairedDevice.publicKey.take(20) + "...")
+                        SettingsRow("Key Fingerprint", pairedDevice.publicKey.take(20) + "...")
 
                         Spacer(modifier = Modifier.height(16.dp))
 
@@ -191,52 +199,52 @@ fun SettingsScreen(
                                 .height(44.dp)
                                 .testTag("unpair_device_btn"),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = CyberAlertRedContainer,
-                                contentColor = CyberAlertRed
+                                containerColor = Color(0x26EF4444),
+                                contentColor = Crimson500
                             ),
-                            shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, CyberAlertRed)
+                            shape = RoundedCornerShape(10.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Crimson500.copy(alpha = 0.4f))
                         ) {
                             Icon(Icons.Default.LinkOff, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("UNPAIR WORKSTATION & WIPE KEYS", fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                            Text("Unpair Workstation & Wipe Keys", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                         }
                     } else {
                         Text(
-                            text = "No laptop paired currently.",
-                            color = CyberTextSecondary,
+                            text = "No workstation is currently paired.",
+                            color = TextSecondary,
                             fontSize = 13.sp
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Button(
                             onClick = onNavigateToPairing,
                             modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary, contentColor = Color.Black),
-                            shape = RoundedCornerShape(8.dp)
+                            colors = ButtonDefaults.buttonColors(containerColor = Cobalt600, contentColor = Color.White),
+                            shape = RoundedCornerShape(10.dp)
                         ) {
-                            Text("PAIR NEW LAPTOP", fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                            Text("Pair New Workstation", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                         }
                     }
                 }
             }
 
-            // Section 2: Relay Connection
+            // Group 2: Relay Connection
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = CyberSurfaceVariant),
-                border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Slate900),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "RELAY & NETWORK SETTINGS",
-                        color = CyberTextTertiary,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace
+                        text = "RELAY & NETWORK",
+                        color = TextSecondary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.5.sp
                     )
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     OutlinedTextField(
                         value = relayUrl,
@@ -247,114 +255,14 @@ fun SettingsScreen(
                         label = { Text("Relay WebSocket Endpoint") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = CyberPrimary,
-                            unfocusedBorderColor = CyberBorder
+                            focusedBorderColor = Cobalt500,
+                            unfocusedBorderColor = Slate700
                         ),
-                        singleLine = true
+                        singleLine = true,
+                        shape = RoundedCornerShape(10.dp)
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text("Automatic Exponential Backoff Reconnect", color = CyberTextPrimary, fontSize = 13.sp)
-                            Text("Retries connection with backoff up to 30s", color = CyberTextSecondary, fontSize = 11.sp)
-                        }
-                        Switch(
-                            checked = autoReconnectEnabled,
-                            onCheckedChange = {
-                                autoReconnectEnabled = it
-                                secureStorage.setAutoReconnectEnabled(it)
-                            },
-                            colors = SwitchDefaults.colors(checkedThumbColor = CyberPrimary, checkedTrackColor = CyberPrimary.copy(alpha = 0.3f))
-                        )
-                    }
-                }
-            }
-
-            // Section 3: Notification Alerts
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = CyberSurfaceVariant),
-                border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "TAMPER ALERT NOTIFICATIONS",
-                        color = CyberTextTertiary,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Vibration, contentDescription = null, tint = CyberTextSecondary, modifier = Modifier.size(20.dp))
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text("Haptic Alert Vibration", color = CyberTextPrimary, fontSize = 13.sp)
-                        }
-                        Switch(
-                            checked = vibrationEnabled,
-                            onCheckedChange = {
-                                vibrationEnabled = it
-                                secureStorage.setVibrationEnabled(it)
-                            },
-                            colors = SwitchDefaults.colors(checkedThumbColor = CyberPrimary, checkedTrackColor = CyberPrimary.copy(alpha = 0.3f))
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.VolumeUp, contentDescription = null, tint = CyberTextSecondary, modifier = Modifier.size(20.dp))
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text("Alarm Audio Sound", color = CyberTextPrimary, fontSize = 13.sp)
-                        }
-                        Switch(
-                            checked = soundEnabled,
-                            onCheckedChange = {
-                                soundEnabled = it
-                                secureStorage.setSoundEnabled(it)
-                            },
-                            colors = SwitchDefaults.colors(checkedThumbColor = CyberPrimary, checkedTrackColor = CyberPrimary.copy(alpha = 0.3f))
-                        )
-                    }
-                }
-            }
-
-            // Section 4: Hackathon Demo & Threat Model
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = CyberSurfaceVariant),
-                border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "HACKATHON DEMO & THREAT MODEL",
-                        color = CyberTextTertiary,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -362,8 +270,118 @@ fun SettingsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("Safe Simulator Mode", color = CyberTextPrimary, fontSize = 13.sp)
-                            Text("Allows live testing on emulator without physical laptop daemon", color = CyberTextSecondary, fontSize = 11.sp)
+                            Text("Exponential Backoff Reconnect", color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                            Text("Automatically retries connection with backoff up to 30s", color = TextSecondary, fontSize = 11.sp)
+                        }
+                        Switch(
+                            checked = autoReconnectEnabled,
+                            onCheckedChange = {
+                                autoReconnectEnabled = it
+                                secureStorage.setAutoReconnectEnabled(it)
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = Cobalt600
+                            )
+                        )
+                    }
+                }
+            }
+
+            // Group 3: Tamper Alerts
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Slate900),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "ALERT NOTIFICATIONS",
+                        color = TextSecondary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.5.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Vibration, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text("Haptic Alert Vibration", color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                        }
+                        Switch(
+                            checked = vibrationEnabled,
+                            onCheckedChange = {
+                                vibrationEnabled = it
+                                secureStorage.setVibrationEnabled(it)
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = Cobalt600
+                            )
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.VolumeUp, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text("Audio Alarm Chime", color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                        }
+                        Switch(
+                            checked = soundEnabled,
+                            onCheckedChange = {
+                                soundEnabled = it
+                                secureStorage.setSoundEnabled(it)
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = Cobalt600
+                            )
+                        )
+                    }
+                }
+            }
+
+            // Group 4: Hackathon Demo & Architecture
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Slate900),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "SECURITY & DIAGNOSTICS",
+                        color = TextSecondary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.5.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Safe Simulator Mode", color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                            Text("Enables safe in-memory simulation for offline presentations", color = TextSecondary, fontSize = 11.sp)
                         }
                         Switch(
                             checked = demoModeEnabled,
@@ -371,27 +389,33 @@ fun SettingsScreen(
                                 demoModeEnabled = it
                                 secureStorage.setDemoModeEnabled(it)
                             },
-                            colors = SwitchDefaults.colors(checkedThumbColor = CyberPrimary, checkedTrackColor = CyberPrimary.copy(alpha = 0.3f))
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = Cobalt600
+                            )
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
 
                     OutlinedButton(
                         onClick = { showSecurityInfoDialog = true },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(44.dp)
                             .testTag("threat_model_btn"),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = CyberPrimary),
-                        shape = RoundedCornerShape(8.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
+                        shape = RoundedCornerShape(10.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
                     ) {
-                        Icon(Icons.Default.Security, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("VIEW THREAT MODEL & ARCHITECTURE", fontSize = 11.sp, fontFamily = FontFamily.Monospace)
+                        Icon(Icons.Default.Security, contentDescription = null, tint = Cobalt500, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("View Threat Model & Cryptographic Specs", fontSize = 12.sp, fontWeight = FontWeight.Medium)
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 
@@ -401,18 +425,18 @@ fun SettingsScreen(
             onDismissRequest = { showUnpairDialog = false },
             title = {
                 Text(
-                    text = "UNPAIR WORKSTATION?",
-                    color = CyberAlertRed,
-                    fontFamily = FontFamily.Monospace,
+                    text = "Unpair Workstation?",
+                    color = TextPrimary,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontSize = 17.sp
                 )
             },
             text = {
                 Text(
                     text = "This will wipe all authenticated tokens, public keys, and cryptographic pairing credentials from the Android Keystore. You will need to scan a new QR code to reconnect.",
-                    color = CyberTextSecondary,
-                    fontSize = 13.sp
+                    color = TextSecondary,
+                    fontSize = 13.sp,
+                    lineHeight = 19.sp
                 )
             },
             confirmButton = {
@@ -421,18 +445,24 @@ fun SettingsScreen(
                         showUnpairDialog = false
                         onUnpair()
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = CyberAlertRed, contentColor = Color.White),
+                    colors = ButtonDefaults.buttonColors(containerColor = Crimson500, contentColor = Color.White),
+                    shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.testTag("confirm_unpair_btn")
                 ) {
-                    Text("UNPAIR & WIPE", fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                    Text("Unpair & Wipe", fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {
-                OutlinedButton(onClick = { showUnpairDialog = false }) {
-                    Text("CANCEL")
+                OutlinedButton(
+                    onClick = { showUnpairDialog = false },
+                    shape = RoundedCornerShape(8.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
+                ) {
+                    Text("Cancel", color = TextSecondary)
                 }
             },
-            containerColor = CyberSurface
+            containerColor = Slate900,
+            shape = RoundedCornerShape(16.dp)
         )
     }
 
@@ -442,48 +472,49 @@ fun SettingsScreen(
             onDismissRequest = { showSecurityInfoDialog = false },
             title = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Security, contentDescription = null, tint = CyberPrimary, modifier = Modifier.size(24.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(Icons.Default.Security, contentDescription = null, tint = Cobalt500, modifier = Modifier.size(22.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "TETHERGUARD ARCHITECTURE",
-                        fontFamily = FontFamily.Monospace,
+                        text = "TetherGuard Architecture",
                         fontWeight = FontWeight.Bold,
-                        color = CyberPrimary,
-                        fontSize = 15.sp
+                        color = TextPrimary,
+                        fontSize = 16.sp
                     )
                 }
             },
             text = {
                 Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                     Text(
-                        text = "SECURITY GUARANTEES:",
-                        color = CyberTextPrimary,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 12.sp
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "1. Zero Long-Term Private Key Exposure: Laptop private keys are never transmitted via QR code or saved on phone.\n" +
-                               "2. Android Keystore Hardware Backing: Session secrets are encrypted using AES-256-GCM backed by hardware Keystore.\n" +
-                               "3. Replay Protection: Every outgoing command carries a UUID request_id, millisecond timestamp, and HMAC-SHA256 signature.\n" +
-                               "4. Strict Device Identity Validation: All incoming frames must match the paired device_id.\n" +
-                               "5. Anti-Flood Cooldown: Critical actions (such as SHUTDOWN) enforce a mandatory cooldown to prevent accidental repeated executions.",
-                        color = CyberTextSecondary,
+                        text = "CRYPTOGRAPHIC GUARANTEES:",
+                        color = TextPrimary,
+                        fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
-                        lineHeight = 17.sp
+                        letterSpacing = 0.5.sp
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "1. Zero Private Key Exposure: Host private keys are never transmitted via QR code or saved on mobile.\n" +
+                               "2. Android Keystore Hardware Backing: Session secrets are encrypted using AES-256-GCM via the secure hardware Keystore.\n" +
+                               "3. Replay Protection: Every command carries a UUID request_id, millisecond timestamp, and HMAC-SHA256 signature.\n" +
+                               "4. Strict Device Identity Validation: All incoming frames must strictly match the authenticated device_id.\n" +
+                               "5. Anti-Flood Cooldown: Critical actions (such as SHUTDOWN) enforce a mandatory cooldown to prevent repeated executions.",
+                        color = TextSecondary,
+                        fontSize = 12.sp,
+                        lineHeight = 18.sp
                     )
                 }
             },
             confirmButton = {
                 Button(
                     onClick = { showSecurityInfoDialog = false },
-                    colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary, contentColor = Color.Black)
+                    colors = ButtonDefaults.buttonColors(containerColor = Cobalt600, contentColor = Color.White),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("CLOSE", fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                    Text("Close", fontWeight = FontWeight.SemiBold)
                 }
             },
-            containerColor = CyberSurface
+            containerColor = Slate900,
+            shape = RoundedCornerShape(16.dp)
         )
     }
 }
@@ -493,10 +524,10 @@ private fun SettingsRow(label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 3.dp),
+            .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = label, color = CyberTextTertiary, fontSize = 12.sp)
-        Text(text = value, color = CyberTextPrimary, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+        Text(text = label, color = TextSecondary, fontSize = 12.sp)
+        Text(text = value, color = TextPrimary, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
     }
 }

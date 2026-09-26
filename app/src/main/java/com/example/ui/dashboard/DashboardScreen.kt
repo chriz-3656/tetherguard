@@ -20,8 +20,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.BatteryFull
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Lock
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Usb
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.Warning
@@ -41,6 +43,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -56,7 +59,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -70,22 +75,24 @@ import com.example.ui.components.ConnectionBadge
 import com.example.ui.components.RemoteShutdownConfirmDialog
 import com.example.ui.components.SeverityBadge
 import com.example.ui.incidents.IncidentAlertModal
-import com.example.ui.theme.CyberAlertRed
-import com.example.ui.theme.CyberAlertRedContainer
-import com.example.ui.theme.CyberBorder
-import com.example.ui.theme.CyberOfflineGray
-import com.example.ui.theme.CyberPrimary
-import com.example.ui.theme.CyberProtectedGreen
-import com.example.ui.theme.CyberProtectedGreenBorder
-import com.example.ui.theme.CyberProtectedGreenContainer
-import com.example.ui.theme.CyberSurface
-import com.example.ui.theme.CyberSurfaceHighlight
-import com.example.ui.theme.CyberSurfaceVariant
-import com.example.ui.theme.CyberTextPrimary
-import com.example.ui.theme.CyberTextSecondary
-import com.example.ui.theme.CyberTextTertiary
-import com.example.ui.theme.CyberWarningAmber
-import com.example.ui.theme.CyberWarningAmberContainer
+import com.example.ui.theme.Amber400
+import com.example.ui.theme.Amber500
+import com.example.ui.theme.Cobalt500
+import com.example.ui.theme.Cobalt600
+import com.example.ui.theme.Cobalt700
+import com.example.ui.theme.Cobalt900
+import com.example.ui.theme.Crimson500
+import com.example.ui.theme.Emerald400
+import com.example.ui.theme.Emerald500
+import com.example.ui.theme.Slate600
+import com.example.ui.theme.Slate700
+import com.example.ui.theme.Slate800
+import com.example.ui.theme.Slate850
+import com.example.ui.theme.Slate900
+import com.example.ui.theme.Slate950
+import com.example.ui.theme.TextPrimary
+import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.TextTertiary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,42 +111,45 @@ fun DashboardScreen(
     val activeCommand by viewModel.activeCommand.collectAsState()
 
     var showShutdownConfirmDialog by remember { mutableStateOf(false) }
+    var showDemoControls by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = CyberPrimary.copy(alpha = 0.15f),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, CyberPrimary)
+                            shape = RoundedCornerShape(10.dp),
+                            color = Color(0x1A3B82F6),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0x333B82F6))
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Security,
-                                contentDescription = null,
-                                tint = CyberPrimary,
-                                modifier = Modifier
-                                    .padding(6.dp)
-                                    .size(20.dp)
-                            )
+                            Box(
+                                modifier = Modifier.padding(7.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Shield,
+                                    contentDescription = null,
+                                    tint = Cobalt500,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "TETHERGUARD",
-                                color = CyberTextPrimary,
-                                fontWeight = FontWeight.Black,
-                                fontFamily = FontFamily.Monospace,
+                                text = "TetherGuard",
+                                color = TextPrimary,
+                                fontWeight = FontWeight.Bold,
                                 fontSize = 17.sp,
-                                letterSpacing = 2.sp
+                                letterSpacing = (-0.2).sp
                             )
                             Text(
-                                text = "PHYSICAL SECURITY CONSOLE",
-                                color = CyberPrimary,
-                                fontSize = 9.sp,
-                                fontFamily = FontFamily.Monospace,
-                                letterSpacing = 1.sp
+                                text = "Endpoint Protection Center",
+                                color = TextSecondary,
+                                fontSize = 11.sp
                             )
                         }
                     }
@@ -152,7 +162,7 @@ fun DashboardScreen(
                         Icon(
                             imageVector = Icons.Default.History,
                             contentDescription = "Incident History",
-                            tint = CyberTextPrimary
+                            tint = TextSecondary
                         )
                     }
                     IconButton(
@@ -162,39 +172,40 @@ fun DashboardScreen(
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings",
-                            tint = CyberTextPrimary
+                            tint = TextSecondary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CyberSurface,
-                    titleContentColor = CyberTextPrimary
+                    containerColor = Slate950,
+                    titleContentColor = TextPrimary
                 )
             )
         },
-        containerColor = CyberSurface
+        containerColor = Slate950
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            // In-flight command status banner
+            // Command Status Banner
             CommandStatusBanner(
                 activeCommand = activeCommand,
                 onDismiss = { viewModel.dismissCommandBanner() }
             )
 
-            // Paired Device Header & Connection Status
+            // Paired Device Header Card
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(vertical = 6.dp)
                     .testTag("device_status_card"),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = CyberSurfaceVariant),
-                border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Slate900),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -202,29 +213,36 @@ fun DashboardScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
-                            Text(
-                                text = "MONITORED WORKSTATION",
-                                color = CyberTextTertiary,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Monospace,
-                                letterSpacing = 1.sp
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = pairedDevice?.deviceName ?: "NO LAPTOP PAIRED",
-                                color = CyberTextPrimary,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Monospace
-                            )
-                            Text(
-                                text = if (pairedDevice != null) "ID: ${pairedDevice?.deviceId}" else "Pair a laptop via QR code to activate telemetry",
-                                color = CyberTextSecondary,
-                                fontSize = 12.sp,
-                                fontFamily = FontFamily.Monospace
-                            )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                color = Slate800,
+                                modifier = Modifier.size(42.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.Computer,
+                                        contentDescription = null,
+                                        tint = if (pairedDevice != null) Cobalt500 else TextTertiary,
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = pairedDevice?.deviceName ?: "No Device Paired",
+                                    color = TextPrimary,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = if (pairedDevice != null) "ID: ${pairedDevice?.deviceId}" else "Scan QR on laptop to pair",
+                                    color = TextSecondary,
+                                    fontSize = 12.sp,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            }
                         }
 
                         if (pairedDevice != null) {
@@ -232,199 +250,213 @@ fun DashboardScreen(
                         } else {
                             Button(
                                 onClick = onNavigateToPairing,
-                                colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary, contentColor = Color.Black),
-                                shape = RoundedCornerShape(8.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = Cobalt600, contentColor = Color.White),
+                                shape = RoundedCornerShape(10.dp),
                                 modifier = Modifier.testTag("dashboard_pair_btn")
                             ) {
                                 Icon(Icons.Default.QrCodeScanner, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("PAIR", fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                                Text("Pair Device", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
                             }
                         }
                     }
 
-                    if (connectionState == ConnectionState.DISCONNECTED && pairedDevice != null) {
-                        Spacer(modifier = Modifier.height(12.dp))
+                    if (pairedDevice != null) {
+                        Spacer(modifier = Modifier.height(14.dp))
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(CyberOfflineGray.copy(alpha = 0.15f), RoundedCornerShape(8.dp))
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                                .background(Slate850, RoundedCornerShape(10.dp))
+                                .padding(horizontal = 12.dp, vertical = 9.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = "Relay OFFLINE • Reconnecting...",
-                                color = CyberOfflineGray,
-                                fontSize = 12.sp,
-                                fontFamily = FontFamily.Monospace
-                            )
-                            IconButton(onClick = { viewModel.reconnect() }, modifier = Modifier.size(24.dp)) {
-                                Icon(Icons.Default.Refresh, contentDescription = "Retry", tint = CyberPrimary, modifier = Modifier.size(16.dp))
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Guardian Mode Card
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 6.dp)
-                    .testTag("guardian_mode_card"),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = when (guardianState) {
-                        GuardianState.TRIGGERED -> CyberAlertRedContainer
-                        GuardianState.ACTIVE -> CyberProtectedGreenContainer
-                        else -> CyberSurfaceVariant
-                    }
-                ),
-                border = androidx.compose.foundation.BorderStroke(
-                    width = 1.5.dp,
-                    color = when (guardianState) {
-                        GuardianState.TRIGGERED -> CyberAlertRed
-                        GuardianState.ACTIVE -> CyberProtectedGreenBorder
-                        else -> CyberBorder
-                    }
-                )
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = "GUARDIAN STATUS",
-                                color = CyberTextSecondary,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Monospace
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                val shieldIconColor = when (guardianState) {
-                                    GuardianState.ACTIVE -> CyberProtectedGreen
-                                    GuardianState.TRIGGERED -> CyberAlertRed
-                                    else -> CyberOfflineGray
-                                }
                                 Icon(
-                                    imageVector = Icons.Default.Shield,
+                                    imageVector = Icons.Default.BatteryFull,
                                     contentDescription = null,
-                                    tint = shieldIconColor,
-                                    modifier = Modifier.size(26.dp)
+                                    tint = TextSecondary,
+                                    modifier = Modifier.size(16.dp)
                                 )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "Battery ${telemetry.batteryPct}%",
+                                    color = TextSecondary,
+                                    fontSize = 12.sp
+                                )
+                            }
+
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Surface(
+                                    shape = RoundedCornerShape(4.dp),
+                                    color = if (telemetry.isWorkstationLocked) Color(0x2610B981) else Color(0x1AEF4444)
+                                ) {
+                                    Text(
+                                        text = if (telemetry.isWorkstationLocked) "LOCKED" else "UNLOCKED",
+                                        color = if (telemetry.isWorkstationLocked) Emerald400 else Crimson500,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = FontFamily.Monospace,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = guardianState.label,
-                                    color = when (guardianState) {
-                                        GuardianState.ACTIVE -> CyberProtectedGreen
-                                        GuardianState.TRIGGERED -> CyberAlertRed
-                                        else -> CyberTextPrimary
-                                    },
-                                    fontSize = 22.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = FontFamily.Monospace,
-                                    letterSpacing = 1.sp
-                                )
-                            }
-                        }
-
-                        // Workstation lock indicator
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = if (telemetry.isWorkstationLocked) CyberProtectedGreen.copy(alpha = 0.2f) else CyberSurfaceHighlight,
-                            border = androidx.compose.foundation.BorderStroke(1.dp, if (telemetry.isWorkstationLocked) CyberProtectedGreen else CyberBorder)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Lock,
-                                    contentDescription = null,
-                                    tint = if (telemetry.isWorkstationLocked) CyberProtectedGreen else CyberTextSecondary,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = if (telemetry.isWorkstationLocked) "LOCKED" else "UNLOCKED",
-                                    color = if (telemetry.isWorkstationLocked) CyberProtectedGreen else CyberTextSecondary,
+                                    text = "TLS 1.3 • AES-256",
+                                    color = TextTertiary,
                                     fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
                                     fontFamily = FontFamily.Monospace
                                 )
                             }
                         }
                     }
+                }
+            }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-                    // Subsystem Monitoring Checklist
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.Black.copy(alpha = 0.35f), RoundedCornerShape(10.dp))
-                            .padding(12.dp)
-                    ) {
-                        SubsystemRow("USB Port Monitoring", telemetry.usbMonitoring)
-                        SubsystemRow("Input Device Watch", telemetry.inputMonitoring)
-                        SubsystemRow("Webcam Tamper Vision", telemetry.webcamWatch)
-                        SubsystemRow("Lid Angle Sensor", telemetry.lidSensor)
+            // Hero Protection Card
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp)
+                    .testTag("guardian_mode_card"),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Slate900),
+                border = androidx.compose.foundation.BorderStroke(
+                    width = 1.dp,
+                    color = when (guardianState) {
+                        GuardianState.TRIGGERED -> Crimson500
+                        GuardianState.ACTIVE -> Color(0x3310B981)
+                        else -> Slate700
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Arm / Disarm Control Buttons
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Button(
-                            onClick = { viewModel.enableGuardian() },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp)
-                                .testTag("enable_guardian_btn"),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (guardianState == GuardianState.ACTIVE) CyberProtectedGreen else CyberSurfaceHighlight,
-                                contentColor = if (guardianState == GuardianState.ACTIVE) Color.Black else CyberTextPrimary
-                            ),
-                            shape = RoundedCornerShape(8.dp),
-                            enabled = connectionState == ConnectionState.CONNECTED
-                        ) {
-                            Text(
-                                text = "ENABLE GUARDIAN",
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Monospace,
-                                fontSize = 12.sp
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = when (guardianState) {
+                                    GuardianState.TRIGGERED -> listOf(Color(0x33EF4444), Slate900)
+                                    GuardianState.ACTIVE -> listOf(Color(0x2610B981), Slate900)
+                                    else -> listOf(Color(0x1A3B82F6), Slate900)
+                                }
                             )
+                        )
+                        .padding(20.dp)
+                ) {
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text(
+                                    text = "PROTECTION STATUS",
+                                    color = TextSecondary,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    letterSpacing = 0.5.sp
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(10.dp)
+                                            .clip(CircleShape)
+                                            .background(
+                                                when (guardianState) {
+                                                    GuardianState.ACTIVE -> Emerald400
+                                                    GuardianState.TRIGGERED -> Crimson500
+                                                    else -> Amber400
+                                                }
+                                            )
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = guardianState.label,
+                                        color = TextPrimary,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = when (guardianState) {
+                                    GuardianState.ACTIVE -> Color(0x1F10B981)
+                                    GuardianState.TRIGGERED -> Color(0x1FEF4444)
+                                    else -> Slate800
+                                },
+                                border = androidx.compose.foundation.BorderStroke(
+                                    1.dp,
+                                    when (guardianState) {
+                                        GuardianState.ACTIVE -> Color(0x4D10B981)
+                                        GuardianState.TRIGGERED -> Color(0x4DEF4444)
+                                        else -> Slate700
+                                    }
+                                ),
+                                modifier = Modifier.size(46.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.Shield,
+                                        contentDescription = null,
+                                        tint = when (guardianState) {
+                                            GuardianState.ACTIVE -> Emerald400
+                                            GuardianState.TRIGGERED -> Crimson500
+                                            else -> TextSecondary
+                                        },
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
                         }
 
-                        Button(
-                            onClick = { viewModel.disableGuardian() },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp)
-                                .testTag("disable_guardian_btn"),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (guardianState == GuardianState.OFF) CyberWarningAmber else CyberSurfaceHighlight,
-                                contentColor = if (guardianState == GuardianState.OFF) Color.Black else CyberTextPrimary
-                            ),
-                            shape = RoundedCornerShape(8.dp),
-                            enabled = connectionState == ConnectionState.CONNECTED
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        // Controls
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Text(
-                                text = "STANDBY",
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Monospace,
-                                fontSize = 12.sp
-                            )
+                            Button(
+                                onClick = { viewModel.enableGuardian() },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(46.dp)
+                                    .testTag("enable_guardian_btn"),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (guardianState == GuardianState.ACTIVE) Emerald500 else Slate800,
+                                    contentColor = if (guardianState == GuardianState.ACTIVE) Color.Black else TextPrimary
+                                ),
+                                shape = RoundedCornerShape(10.dp),
+                                enabled = connectionState == ConnectionState.CONNECTED
+                            ) {
+                                Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Arm Guardian", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                            }
+
+                            Button(
+                                onClick = { viewModel.disableGuardian() },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(46.dp)
+                                    .testTag("disable_guardian_btn"),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (guardianState == GuardianState.OFF) Slate800 else Slate850,
+                                    contentColor = if (guardianState == GuardianState.OFF) Amber400 else TextSecondary
+                                ),
+                                shape = RoundedCornerShape(10.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700),
+                                enabled = connectionState == ConnectionState.CONNECTED
+                            ) {
+                                Text("Standby Mode", fontWeight = FontWeight.Medium, fontSize = 13.sp)
+                            }
                         }
                     }
                 }
@@ -432,23 +464,76 @@ fun DashboardScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Emergency Remote Actions
+            // Subsystem Watch Tiles Grid
+            Text(
+                text = "ACTIVE PERIMETER SENSORS",
+                color = TextSecondary,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.5.sp,
+                modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SensorTile(
+                    title = "USB Guard",
+                    subtitle = "Unauthorized Port Block",
+                    isActive = telemetry.usbMonitoring,
+                    icon = Icons.Default.Usb,
+                    modifier = Modifier.weight(1f)
+                )
+                SensorTile(
+                    title = "Lid Tamper",
+                    subtitle = "Angle Sensor Watch",
+                    isActive = telemetry.lidSensor,
+                    icon = Icons.Default.Visibility,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SensorTile(
+                    title = "Keystroke Shield",
+                    subtitle = "Virtual HID Protection",
+                    isActive = telemetry.inputMonitoring,
+                    icon = Icons.Default.Security,
+                    modifier = Modifier.weight(1f)
+                )
+                SensorTile(
+                    title = "Optical Tamper",
+                    subtitle = "Webcam Frame Capture",
+                    isActive = telemetry.webcamWatch,
+                    icon = Icons.Default.Visibility,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Quick Emergency Actions
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = CyberSurfaceVariant),
-                border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                    .padding(vertical = 4.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Slate900),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "AUTHENTICATED REMOTE COMMANDS",
-                        color = CyberTextTertiary,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace,
-                        letterSpacing = 1.sp
+                        text = "EMERGENCY ACTIONS",
+                        color = TextSecondary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.5.sp
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -457,58 +542,58 @@ fun DashboardScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Button(
+                        OutlinedButton(
                             onClick = { viewModel.sendLockCommand() },
                             modifier = Modifier
                                 .weight(1f)
-                                .height(48.dp)
+                                .height(46.dp)
                                 .testTag("remote_lock_btn"),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = CyberSurfaceHighlight,
-                                contentColor = CyberPrimary
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = Cobalt500
                             ),
-                            shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, CyberPrimary),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Cobalt500.copy(alpha = 0.5f)),
                             enabled = connectionState == ConnectionState.CONNECTED
                         ) {
                             Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("LOCK", fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                            Text("Lock Workstation", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
                         }
 
                         Button(
                             onClick = { showShutdownConfirmDialog = true },
                             modifier = Modifier
                                 .weight(1f)
-                                .height(48.dp)
+                                .height(46.dp)
                                 .testTag("remote_shutdown_btn"),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = CyberAlertRedContainer,
-                                contentColor = CyberAlertRed
+                                containerColor = Color(0x26EF4444),
+                                contentColor = Crimson500
                             ),
-                            shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, CyberAlertRed),
+                            shape = RoundedCornerShape(10.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Crimson500.copy(alpha = 0.4f)),
                             enabled = connectionState == ConnectionState.CONNECTED
                         ) {
                             Icon(Icons.Default.PowerSettingsNew, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("SHUTDOWN", fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                            Text("Shut Down", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // Last Event Section
+            // Recent Event Preview Card
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 6.dp)
+                    .padding(vertical = 4.dp)
+                    .clickable(onClick = onNavigateToHistory)
                     .testTag("last_event_card"),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = CyberSurfaceVariant),
-                border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Slate900),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -517,24 +602,30 @@ fun DashboardScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "LAST EVENT",
-                            color = CyberTextTertiary,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Monospace,
-                            letterSpacing = 1.sp
+                            text = "LATEST SECURITY EVENT",
+                            color = TextSecondary,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 0.5.sp
                         )
 
-                        Text(
-                            text = "VIEW AUDIT LOG →",
-                            color = CyberPrimary,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Monospace,
-                            modifier = Modifier
-                                .clickable(onClick = onNavigateToHistory)
-                                .testTag("view_audit_history_link")
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.testTag("view_audit_history_link")
+                        ) {
+                            Text(
+                                text = "Audit Log",
+                                color = Cobalt500,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Icon(
+                                imageVector = Icons.Default.ChevronRight,
+                                contentDescription = null,
+                                tint = Cobalt500,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -549,127 +640,132 @@ fun DashboardScreen(
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = incident.eventType.displayName,
-                                    color = CyberTextPrimary,
+                                    color = TextPrimary,
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.SemiBold
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = "${incident.deviceName} • ${incident.timestamp}",
-                                    color = CyberTextSecondary,
-                                    fontSize = 12.sp,
-                                    fontFamily = FontFamily.Monospace
+                                    color = TextSecondary,
+                                    fontSize = 12.sp
                                 )
                             }
                             SeverityBadge(severity = incident.severity)
                         }
                     } else {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = null,
-                                tint = CyberProtectedGreen,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0x1F10B981)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = Emerald400,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = "No incidents detected • Workstation protected",
-                                color = CyberTextSecondary,
-                                fontSize = 13.sp,
-                                fontFamily = FontFamily.Monospace
+                                color = TextSecondary,
+                                fontSize = 13.sp
                             )
                         }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
-            // Hackathon Demo Simulation Tool Strip
-            Surface(
+            // Collapsible Simulator Drawer for Demo/Hackathon
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 4.dp)
                     .testTag("demo_simulator_panel"),
-                shape = RoundedCornerShape(12.dp),
-                color = Color.Black.copy(alpha = 0.5f),
-                border = androidx.compose.foundation.BorderStroke(1.dp, CyberPrimary.copy(alpha = 0.3f))
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Slate900.copy(alpha = 0.6f)),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700.copy(alpha = 0.6f))
             ) {
                 Column(modifier = Modifier.padding(14.dp)) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { showDemoControls = !showDemoControls },
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "DEMO SIMULATOR (HACKATHON)",
-                            color = CyberPrimary,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Monospace
-                        )
-                        Surface(
-                            shape = RoundedCornerShape(4.dp),
-                            color = CyberPrimary.copy(alpha = 0.2f)
-                        ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Tune, contentDescription = null, tint = TextTertiary, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "SAFE MODE",
-                                color = CyberPrimary,
-                                fontSize = 9.sp,
-                                fontFamily = FontFamily.Monospace,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                text = "Hackathon Interactive Diagnostics",
+                                color = TextSecondary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium
                             )
                         }
+                        Text(
+                            text = if (showDemoControls) "Hide" else "Show",
+                            color = Cobalt500,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    AnimatedVisibility(visible = showDemoControls) {
+                        Column(modifier = Modifier.padding(top = 12.dp)) {
+                            Text(
+                                text = "Simulate real-world tamper scenarios to test alert & evidence response:",
+                                color = TextTertiary,
+                                fontSize = 11.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                OutlinedButton(
+                                    onClick = { viewModel.triggerDemoIncident(IncidentType.USB_INSERT) },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .testTag("demo_usb_btn"),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Crimson500),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, Crimson500.copy(alpha = 0.5f))
+                                ) {
+                                    Text("USB Insert", fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                                }
 
-                    Text(
-                        text = "Trigger realistic tamper telemetry frames to demonstrate the complete Android response pipeline:",
-                        color = CyberTextTertiary,
-                        fontSize = 11.sp
-                    )
+                                OutlinedButton(
+                                    onClick = { viewModel.triggerDemoIncident(IncidentType.LID_OPEN) },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .testTag("demo_lid_btn"),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Amber500),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, Amber500.copy(alpha = 0.5f))
+                                ) {
+                                    Text("Lid Open", fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                                }
 
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        OutlinedButton(
-                            onClick = { viewModel.triggerDemoIncident(IncidentType.USB_INSERT) },
-                            modifier = Modifier
-                                .weight(1f)
-                                .testTag("demo_usb_btn"),
-                            shape = RoundedCornerShape(6.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = CyberAlertRed),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, CyberAlertRed.copy(alpha = 0.6f))
-                        ) {
-                            Text("USB INSERT", fontSize = 10.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
-                        }
-
-                        OutlinedButton(
-                            onClick = { viewModel.triggerDemoIncident(IncidentType.LID_OPEN) },
-                            modifier = Modifier
-                                .weight(1f)
-                                .testTag("demo_lid_btn"),
-                            shape = RoundedCornerShape(6.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = CyberWarningAmber),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, CyberWarningAmber.copy(alpha = 0.6f))
-                        ) {
-                            Text("LID OPEN", fontSize = 10.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
-                        }
-
-                        OutlinedButton(
-                            onClick = { viewModel.triggerDemoIncident(IncidentType.INPUT_ATTEMPT) },
-                            modifier = Modifier
-                                .weight(1f)
-                                .testTag("demo_keylogger_btn"),
-                            shape = RoundedCornerShape(6.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = CyberPrimary),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, CyberPrimary.copy(alpha = 0.6f))
-                        ) {
-                            Text("KEYLOGGER", fontSize = 10.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                                OutlinedButton(
+                                    onClick = { viewModel.triggerDemoIncident(IncidentType.INPUT_ATTEMPT) },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .testTag("demo_keylogger_btn"),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Cobalt500),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, Cobalt500.copy(alpha = 0.5f))
+                                ) {
+                                    Text("Keylogger", fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                                }
+                            }
                         }
                     }
                 }
@@ -683,15 +779,9 @@ fun DashboardScreen(
     activeIncidentAlert?.let { incident ->
         IncidentAlertModal(
             incident = incident,
-            onKeepLocked = {
-                viewModel.keepLockedOnAlert(incident)
-            },
-            onRemoteShutdown = {
-                viewModel.remoteShutdownOnAlert(incident)
-            },
-            onDismiss = {
-                viewModel.dismissActiveAlert()
-            }
+            onKeepLocked = { viewModel.keepLockedOnAlert(incident) },
+            onRemoteShutdown = { viewModel.remoteShutdownOnAlert(incident) },
+            onDismiss = { viewModel.dismissActiveAlert() }
         )
     }
 
@@ -711,35 +801,53 @@ fun DashboardScreen(
 }
 
 @Composable
-private fun SubsystemRow(name: String, isOk: Boolean) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 3.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+private fun SensorTile(
+    title: String,
+    subtitle: String,
+    isActive: Boolean,
+    icon: ImageVector,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        color = Slate900,
+        border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
     ) {
-        Text(
-            text = name,
-            color = CyberTextSecondary,
-            fontSize = 12.sp,
-            fontFamily = FontFamily.Monospace
-        )
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Active",
-                tint = if (isOk) CyberProtectedGreen else CyberOfflineGray,
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = if (isOk) "ACTIVE" else "DISABLED",
-                color = if (isOk) CyberProtectedGreen else CyberOfflineGray,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Monospace
-            )
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = if (isActive) Color(0x1F10B981) else Slate800,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = if (isActive) Emerald400 else TextTertiary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Column {
+                Text(
+                    text = title,
+                    color = TextPrimary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = if (isActive) "Active • Watching" else "Disabled",
+                    color = if (isActive) Emerald400 else TextTertiary,
+                    fontSize = 10.sp
+                )
+            }
         }
     }
 }

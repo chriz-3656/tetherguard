@@ -5,44 +5,43 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val TetherDarkColorScheme = darkColorScheme(
-    primary = CyberPrimary,
-    onPrimary = CyberOnPrimary,
-    primaryContainer = CyberPrimaryContainer,
-    onPrimaryContainer = CyberPrimary,
+private val ProfessionalDarkColorScheme = darkColorScheme(
+    primary = Cobalt500,
+    onPrimary = Color.White,
+    primaryContainer = Cobalt900,
+    onPrimaryContainer = Color.White,
 
-    secondary = CyberSecondary,
-    onSecondary = Color.Black,
-    secondaryContainer = CyberSecondaryContainer,
-    onSecondaryContainer = CyberSecondary,
+    secondary = Cobalt500,
+    onSecondary = Color.White,
+    secondaryContainer = Cobalt900,
+    onSecondaryContainer = Color.White,
 
-    tertiary = CyberProtectedGreen,
-    onTertiary = Color.Black,
-    tertiaryContainer = CyberProtectedGreenContainer,
-    onTertiaryContainer = CyberProtectedGreen,
+    tertiary = Emerald500,
+    onTertiary = Color.White,
+    tertiaryContainer = Emerald900,
+    onTertiaryContainer = Emerald400,
 
-    error = CyberAlertRed,
+    error = Crimson500,
     onError = Color.White,
-    errorContainer = CyberAlertRedContainer,
-    onErrorContainer = CyberAlertRed,
+    errorContainer = Crimson900,
+    onErrorContainer = Color.White,
 
-    background = CyberBackground,
-    onBackground = CyberTextPrimary,
-    surface = CyberSurface,
-    onSurface = CyberTextPrimary,
-    surfaceVariant = CyberSurfaceVariant,
-    onSurfaceVariant = CyberTextSecondary,
-    outline = CyberBorder,
-    outlineVariant = CyberSurfaceHighlight
+    background = Slate950,
+    onBackground = TextPrimary,
+    surface = Slate900,
+    onSurface = TextPrimary,
+    surfaceVariant = Slate850,
+    onSurfaceVariant = TextSecondary,
+    outline = Slate700,
+    outlineVariant = Slate600
 )
 
 @Composable
 fun TetherGuardTheme(
     content: @Composable () -> Unit
 ) {
-    // TetherGuard strictly adheres to the dark security console theme
     MaterialTheme(
-        colorScheme = TetherDarkColorScheme,
+        colorScheme = ProfessionalDarkColorScheme,
         typography = Typography,
         content = content
     )

@@ -23,7 +23,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PowerSettingsNew
-import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -50,42 +50,39 @@ import com.example.data.models.CommandStatus
 import com.example.data.models.ConnectionState
 import com.example.data.models.GuardianState
 import com.example.data.models.IncidentSeverity
-import com.example.ui.theme.CyberAlertRed
-import com.example.ui.theme.CyberAlertRedBorder
-import com.example.ui.theme.CyberAlertRedContainer
-import com.example.ui.theme.CyberBorder
-import com.example.ui.theme.CyberOfflineGray
-import com.example.ui.theme.CyberPrimary
-import com.example.ui.theme.CyberProtectedGreen
-import com.example.ui.theme.CyberProtectedGreenBorder
-import com.example.ui.theme.CyberProtectedGreenContainer
-import com.example.ui.theme.CyberSurface
-import com.example.ui.theme.CyberSurfaceHighlight
-import com.example.ui.theme.CyberSurfaceVariant
-import com.example.ui.theme.CyberTextPrimary
-import com.example.ui.theme.CyberTextSecondary
-import com.example.ui.theme.CyberTextTertiary
-import com.example.ui.theme.CyberWarningAmber
-import com.example.ui.theme.CyberWarningAmberContainer
+import com.example.ui.theme.Amber400
+import com.example.ui.theme.Amber500
+import com.example.ui.theme.Cobalt500
+import com.example.ui.theme.Crimson500
+import com.example.ui.theme.Emerald400
+import com.example.ui.theme.Emerald500
+import com.example.ui.theme.Slate600
+import com.example.ui.theme.Slate700
+import com.example.ui.theme.Slate800
+import com.example.ui.theme.Slate850
+import com.example.ui.theme.Slate900
+import com.example.ui.theme.TextPrimary
+import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.TextTertiary
 
 @Composable
 fun ConnectionBadge(
     connectionState: ConnectionState,
     modifier: Modifier = Modifier
 ) {
-    val (dotColor, text, bgColor) = when (connectionState) {
-        ConnectionState.CONNECTED -> Triple(CyberProtectedGreen, "Connected", CyberProtectedGreenContainer)
-        ConnectionState.CONNECTING -> Triple(CyberWarningAmber, "Connecting...", CyberWarningAmberContainer)
-        ConnectionState.AUTHENTICATING -> Triple(CyberPrimary, "Authenticating...", CyberSurfaceHighlight)
-        ConnectionState.ERROR -> Triple(CyberAlertRed, "Connection Error", CyberAlertRedContainer)
-        ConnectionState.DISCONNECTED -> Triple(CyberOfflineGray, "OFFLINE", CyberSurfaceVariant)
+    val (dotColor, text, bgColor, borderColor) = when (connectionState) {
+        ConnectionState.CONNECTED -> Quad(Emerald400, "Online", Color(0x2610B981), Color(0x4D10B981))
+        ConnectionState.CONNECTING -> Quad(Amber400, "Connecting", Color(0x26F59E0B), Color(0x4DF59E0B))
+        ConnectionState.AUTHENTICATING -> Quad(Cobalt500, "Authenticating", Color(0x263B82F6), Color(0x4D3B82F6))
+        ConnectionState.ERROR -> Quad(Crimson500, "Connection Error", Color(0x26EF4444), Color(0x4DEF4444))
+        ConnectionState.DISCONNECTED -> Quad(TextTertiary, "Offline", Slate850, Slate700)
     }
 
     Surface(
         modifier = modifier.testTag("connection_status_badge"),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(20.dp),
         color = bgColor,
-        border = androidx.compose.foundation.BorderStroke(1.dp, dotColor.copy(alpha = 0.5f))
+        border = androidx.compose.foundation.BorderStroke(1.dp, borderColor)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
@@ -93,41 +90,42 @@ fun ConnectionBadge(
         ) {
             Box(
                 modifier = Modifier
-                    .size(8.dp)
+                    .size(7.dp)
                     .clip(CircleShape)
                     .background(dotColor)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = text,
-                color = if (connectionState == ConnectionState.DISCONNECTED) CyberTextSecondary else CyberTextPrimary,
+                color = if (connectionState == ConnectionState.DISCONNECTED) TextSecondary else TextPrimary,
                 fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                fontFamily = FontFamily.Monospace
+                fontWeight = FontWeight.Medium
             )
         }
     }
 }
 
+private data class Quad<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
+
 @Composable
 fun SeverityBadge(severity: IncidentSeverity) {
-    val (color, bg) = when (severity) {
-        IncidentSeverity.CRITICAL -> CyberAlertRed to CyberAlertRedContainer
-        IncidentSeverity.HIGH -> CyberAlertRed to CyberAlertRedContainer
-        IncidentSeverity.MEDIUM -> CyberWarningAmber to CyberWarningAmberContainer
-        IncidentSeverity.LOW -> CyberPrimary to CyberSurfaceHighlight
+    val (color, bg, border) = when (severity) {
+        IncidentSeverity.CRITICAL -> Triple(Crimson500, Color(0x2CEF4444), Color(0x66EF4444))
+        IncidentSeverity.HIGH -> Triple(Crimson500, Color(0x26EF4444), Color(0x4DEF4444))
+        IncidentSeverity.MEDIUM -> Triple(Amber500, Color(0x26F59E0B), Color(0x4DF59E0B))
+        IncidentSeverity.LOW -> Triple(Cobalt500, Color(0x263B82F6), Color(0x4D3B82F6))
     }
 
     Surface(
         shape = RoundedCornerShape(6.dp),
         color = bg,
-        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.6f))
+        border = androidx.compose.foundation.BorderStroke(1.dp, border)
     ) {
         Text(
             text = severity.name,
             color = color,
             fontSize = 11.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
             fontFamily = FontFamily.Monospace
         )
@@ -146,12 +144,11 @@ fun CommandStatusBanner(
     ) {
         if (activeCommand == null) return@AnimatedVisibility
 
-        val (icon, color, bg) = when (activeCommand.status) {
-            CommandStatus.IDLE -> Triple(Icons.Default.HourglassEmpty, CyberOfflineGray, CyberSurfaceVariant)
-            CommandStatus.SENDING -> Triple(Icons.Default.HourglassEmpty, CyberPrimary, CyberSurfaceHighlight)
-            CommandStatus.ACKNOWLEDGED -> Triple(Icons.Default.CheckCircle, CyberProtectedGreen, CyberProtectedGreenContainer)
-            CommandStatus.FAILED -> Triple(Icons.Default.Warning, CyberAlertRed, CyberAlertRedContainer)
-            CommandStatus.TIMEOUT -> Triple(Icons.Default.Warning, CyberAlertRed, CyberAlertRedContainer)
+        val (icon, color, bg, border) = when (activeCommand.status) {
+            CommandStatus.IDLE -> Quad(Icons.Default.HourglassEmpty, TextTertiary, Slate850, Slate700)
+            CommandStatus.SENDING -> Quad(Icons.Default.HourglassEmpty, Cobalt500, Slate850, Cobalt500.copy(alpha = 0.5f))
+            CommandStatus.ACKNOWLEDGED -> Quad(Icons.Default.CheckCircle, Emerald400, Color(0x1F10B981), Emerald500.copy(alpha = 0.4f))
+            CommandStatus.FAILED, CommandStatus.TIMEOUT -> Quad(Icons.Default.Warning, Crimson500, Color(0x1FEF4444), Crimson500.copy(alpha = 0.4f))
         }
 
         Surface(
@@ -159,21 +156,21 @@ fun CommandStatusBanner(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 6.dp)
                 .testTag("command_status_banner"),
-            shape = RoundedCornerShape(10.dp),
+            shape = RoundedCornerShape(12.dp),
             color = bg,
-            border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.7f))
+            border = androidx.compose.foundation.BorderStroke(1.dp, border)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                    .padding(horizontal = 14.dp, vertical = 11.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (activeCommand.status == CommandStatus.SENDING) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(18.dp),
                         strokeWidth = 2.dp,
-                        color = CyberPrimary
+                        color = Cobalt500
                     )
                 } else {
                     Icon(
@@ -184,27 +181,26 @@ fun CommandStatusBanner(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "COMMAND: ${activeCommand.command} [${activeCommand.status.name}]",
-                        color = CyberTextPrimary,
+                        text = "Command ${activeCommand.command} • ${activeCommand.status.name}",
+                        color = TextPrimary,
                         fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace
+                        fontWeight = FontWeight.SemiBold
                     )
                     if (activeCommand.errorMessage != null) {
                         Text(
                             text = activeCommand.errorMessage,
-                            color = CyberTextSecondary,
-                            fontSize = 11.sp
+                            color = TextSecondary,
+                            fontSize = 12.sp
                         )
                     } else if (activeCommand.status == CommandStatus.ACKNOWLEDGED) {
                         Text(
-                            text = "Laptop daemon confirmed execution",
-                            color = CyberProtectedGreen,
-                            fontSize = 11.sp
+                            text = "Workstation executed and acknowledged command",
+                            color = Emerald400,
+                            fontSize = 12.sp
                         )
                     }
                 }
@@ -212,12 +208,12 @@ fun CommandStatusBanner(
                 if (activeCommand.status != CommandStatus.SENDING) {
                     IconButton(
                         onClick = onDismiss,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(28.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Dismiss",
-                            tint = CyberTextSecondary,
+                            tint = TextSecondary,
                             modifier = Modifier.size(16.dp)
                         )
                     }
@@ -237,60 +233,77 @@ fun RemoteShutdownConfirmDialog(
         onDismissRequest = onDismiss,
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.PowerSettingsNew,
-                    contentDescription = null,
-                    tint = CyberAlertRed,
-                    modifier = Modifier.size(28.dp)
-                )
-                Spacer(modifier = Modifier.width(10.dp))
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color(0x26EF4444),
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.PowerSettingsNew,
+                            contentDescription = null,
+                            tint = Crimson500,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "CONFIRM SHUTDOWN",
-                    color = CyberAlertRed,
+                    text = "Confirm Remote Shutdown",
+                    color = TextPrimary,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace,
-                    fontSize = 18.sp
+                    fontSize = 17.sp
                 )
             }
         },
         text = {
             Column {
                 Text(
-                    text = "Are you sure you want to send an ACPI REMOTE SHUTDOWN command to $deviceName?",
-                    color = CyberTextPrimary,
-                    fontSize = 14.sp
+                    text = "Initiate an emergency ACPI power shutdown on $deviceName?",
+                    color = TextPrimary,
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp
                 )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "• The laptop will immediately flush caches and power off.\n• You will lose remote control until the device is manually rebooted.\n• 10s security anti-flood cooldown applies.",
-                    color = CyberTextSecondary,
-                    fontSize = 12.sp,
-                    lineHeight = 18.sp
-                )
+                Spacer(modifier = Modifier.height(14.dp))
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = Slate850,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                            text = "• The host will sync filesystem caches and cut power immediately.\n• Remote access will disconnect until manually booted.\n• Anti-flood cooldown of 10s applies.",
+                            color = TextSecondary,
+                            fontSize = 12.sp,
+                            lineHeight = 18.sp
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
             Button(
                 onClick = onConfirm,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = CyberAlertRed,
+                    containerColor = Crimson500,
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.testTag("confirm_shutdown_btn")
             ) {
-                Text("EXECUTE SHUTDOWN", fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                Text("Execute Shutdown", fontWeight = FontWeight.SemiBold)
             }
         },
         dismissButton = {
             OutlinedButton(
                 onClick = onDismiss,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
             ) {
-                Text("CANCEL", color = CyberTextSecondary)
+                Text("Cancel", color = TextSecondary)
             }
         },
-        containerColor = CyberSurface,
-        shape = RoundedCornerShape(14.dp)
+        containerColor = Slate900,
+        shape = RoundedCornerShape(16.dp)
     )
 }

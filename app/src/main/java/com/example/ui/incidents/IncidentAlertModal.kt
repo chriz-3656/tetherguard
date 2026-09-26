@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -52,21 +53,20 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.data.models.Incident
-import com.example.data.models.IncidentResponseStatus
 import com.example.ui.components.SeverityBadge
-import com.example.ui.theme.CyberAlertRed
-import com.example.ui.theme.CyberAlertRedBorder
-import com.example.ui.theme.CyberAlertRedContainer
-import com.example.ui.theme.CyberBorder
-import com.example.ui.theme.CyberPrimary
-import com.example.ui.theme.CyberProtectedGreen
-import com.example.ui.theme.CyberSurface
-import com.example.ui.theme.CyberSurfaceHighlight
-import com.example.ui.theme.CyberSurfaceVariant
-import com.example.ui.theme.CyberTextPrimary
-import com.example.ui.theme.CyberTextSecondary
-import com.example.ui.theme.CyberTextTertiary
-import com.example.ui.theme.CyberWarningAmber
+import com.example.ui.theme.Amber400
+import com.example.ui.theme.Crimson500
+import com.example.ui.theme.Crimson600
+import com.example.ui.theme.Emerald400
+import com.example.ui.theme.Slate600
+import com.example.ui.theme.Slate700
+import com.example.ui.theme.Slate800
+import com.example.ui.theme.Slate850
+import com.example.ui.theme.Slate900
+import com.example.ui.theme.Slate950
+import com.example.ui.theme.TextPrimary
+import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.TextTertiary
 
 @Composable
 fun IncidentAlertModal(
@@ -100,9 +100,9 @@ fun IncidentAlertModal(
                 .background(Color.Black.copy(alpha = 0.85f))
                 .padding(16.dp)
                 .testTag("incident_alert_modal"),
-            shape = RoundedCornerShape(16.dp),
-            color = CyberSurface,
-            border = androidx.compose.foundation.BorderStroke(2.dp, CyberAlertRedBorder)
+            shape = RoundedCornerShape(20.dp),
+            color = Slate900,
+            border = androidx.compose.foundation.BorderStroke(1.dp, Crimson500.copy(alpha = 0.5f))
         ) {
             Column(
                 modifier = Modifier
@@ -110,7 +110,7 @@ fun IncidentAlertModal(
                     .verticalScroll(rememberScrollState())
                     .padding(20.dp)
             ) {
-                // Top Alert Bar
+                // Top Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -118,32 +118,32 @@ fun IncidentAlertModal(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = CyberAlertRedContainer,
-                            modifier = Modifier.padding(end = 12.dp)
+                            shape = RoundedCornerShape(10.dp),
+                            color = Color(0x26EF4444),
+                            modifier = Modifier.size(40.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Warning,
-                                contentDescription = null,
-                                tint = CyberAlertRed,
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .size(28.dp)
-                            )
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = Crimson500,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
                         }
+                        Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "TAMPER DETECTED",
-                                color = CyberAlertRed,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Black,
-                                fontFamily = FontFamily.Monospace,
-                                letterSpacing = 1.sp
+                                text = "Security Event Detected",
+                                color = TextPrimary,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = (-0.2).sp
                             )
                             Text(
-                                text = "TetherGuard Real-time Live Security Intercept",
-                                color = CyberTextSecondary,
-                                fontSize = 11.sp
+                                text = "Physical perimeter tamper triggered",
+                                color = TextSecondary,
+                                fontSize = 12.sp
                             )
                         }
                     }
@@ -155,19 +155,19 @@ fun IncidentAlertModal(
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Dismiss",
-                            tint = CyberTextSecondary
+                            tint = TextSecondary
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
-                // Metadata Card
+                // Event Summary Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = CyberSurfaceVariant),
-                    shape = RoundedCornerShape(12.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                    colors = CardDefaults.cardColors(containerColor = Slate850),
+                    shape = RoundedCornerShape(14.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(
@@ -176,54 +176,53 @@ fun IncidentAlertModal(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "EVENT DETAILS",
-                                color = CyberTextTertiary,
+                                text = "EVENT SPECIFICATIONS",
+                                color = TextSecondary,
                                 fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily.Monospace
+                                fontWeight = FontWeight.SemiBold,
+                                letterSpacing = 0.5.sp
                             )
                             SeverityBadge(severity = incident.severity)
                         }
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
-                        DetailRow(label = "Event", value = incident.eventType.displayName, isHighlight = true)
-                        DetailRow(label = "Time", value = incident.timestamp.ifEmpty { "Just Now" })
-                        DetailRow(label = "Device", value = incident.deviceName)
+                        DetailRow(label = "Classification", value = incident.eventType.displayName, isHighlight = true)
+                        DetailRow(label = "Detection Time", value = incident.timestamp.ifEmpty { "Just Now" })
+                        DetailRow(label = "Hardware Target", value = incident.deviceName)
                         if (incident.vendorId != null || incident.productId != null) {
                             DetailRow(
-                                label = "Hardware ID",
+                                label = "USB Identifiers",
                                 value = "VID: ${incident.vendorId ?: "N/A"} • PID: ${incident.productId ?: "N/A"}"
                             )
                         }
-                        DetailRow(label = "Target Laptop", value = incident.deviceId)
+                        DetailRow(label = "Host Device", value = incident.deviceId)
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
-                        // Status Banner
+                        // Automatic Workstation Lock Status
                         Surface(
                             shape = RoundedCornerShape(8.dp),
-                            color = CyberProtectedGreen.copy(alpha = 0.12f),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, CyberProtectedGreen.copy(alpha = 0.4f)),
+                            color = Color(0x1F10B981),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0x3310B981)),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Row(
-                                modifier = Modifier.padding(10.dp),
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Lock,
                                     contentDescription = null,
-                                    tint = CyberProtectedGreen,
-                                    modifier = Modifier.size(18.dp)
+                                    tint = Emerald400,
+                                    modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Status: Workstation locked immediately",
-                                    color = CyberProtectedGreen,
+                                    text = "Workstation automatically locked by TetherGuard daemon",
+                                    color = Emerald400,
                                     fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontFamily = FontFamily.Monospace
+                                    fontWeight = FontWeight.Medium
                                 )
                             }
                         }
@@ -232,13 +231,13 @@ fun IncidentAlertModal(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Evidence Section
+                // Evidence Preview Section
                 Text(
-                    text = "EVENT EVIDENCE",
-                    color = CyberTextTertiary,
+                    text = "OPTICAL / SENSOR EVIDENCE",
+                    color = TextSecondary,
                     fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 0.5.sp
                 )
                 Spacer(modifier = Modifier.height(6.dp))
 
@@ -246,9 +245,9 @@ fun IncidentAlertModal(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(180.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.Black),
-                    shape = RoundedCornerShape(12.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                    colors = CardDefaults.cardColors(containerColor = Slate950),
+                    shape = RoundedCornerShape(14.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -257,53 +256,59 @@ fun IncidentAlertModal(
                         if (decodedBitmap != null) {
                             Image(
                                 bitmap = decodedBitmap.asImageBitmap(),
-                                contentDescription = "Security camera evidence frame",
+                                contentDescription = "Security camera frame capture",
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
                         } else {
-                            // Tactical sensor telemetry visualization
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
                                 modifier = Modifier.padding(16.dp)
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.CameraAlt,
-                                    contentDescription = null,
-                                    tint = CyberPrimary,
-                                    modifier = Modifier.size(36.dp)
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Surface(
+                                    shape = CircleShape,
+                                    color = Slate850,
+                                    modifier = Modifier.size(44.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = Icons.Default.CameraAlt,
+                                            contentDescription = null,
+                                            tint = TextSecondary,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(10.dp))
                                 Text(
-                                    text = "[ SENSOR CAPTURE ATTACHED ]",
-                                    color = CyberPrimary,
-                                    fontSize = 12.sp,
-                                    fontFamily = FontFamily.Monospace,
-                                    fontWeight = FontWeight.Bold
+                                    text = "Webcam Frame Attached",
+                                    color = TextPrimary,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.SemiBold
                                 )
                                 Text(
-                                    text = "Optical / peripheral tamper trigger recorded",
-                                    color = CyberTextSecondary,
+                                    text = "Captured upon physical connection event",
+                                    color = TextSecondary,
                                     fontSize = 11.sp
                                 )
                             }
                         }
 
-                        // Watermark tag
+                        // Evidence timestamp watermark
                         Surface(
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
-                                .padding(8.dp),
-                            shape = RoundedCornerShape(4.dp),
-                            color = Color.Black.copy(alpha = 0.7f)
+                                .padding(10.dp),
+                            shape = RoundedCornerShape(6.dp),
+                            color = Color.Black.copy(alpha = 0.75f)
                         ) {
                             Text(
-                                text = "LIVE EVIDENCE • ${incident.timestamp}",
-                                color = CyberTextPrimary,
+                                text = "Evidence Record • ${incident.timestamp}",
+                                color = TextPrimary,
                                 fontSize = 10.sp,
                                 fontFamily = FontFamily.Monospace,
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                             )
                         }
                     }
@@ -311,17 +316,16 @@ fun IncidentAlertModal(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Neutral Security Notice
                 Text(
-                    text = "Notice: An event denotes unexpected hardware or sensor activity. Neutral verification recommended before escalation.",
-                    color = CyberTextTertiary,
+                    text = "Notice: Physical sensor triggers denote unexpected hardware changes. Neutral verification recommended before escalation.",
+                    color = TextTertiary,
                     fontSize = 11.sp,
                     lineHeight = 16.sp
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Actions Section: [ KEEP LOCKED ] and [ REMOTE SHUTDOWN ]
+                // Response Actions
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -330,27 +334,25 @@ fun IncidentAlertModal(
                         onClick = onKeepLocked,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(52.dp)
+                            .height(48.dp)
                             .testTag("action_keep_locked_btn"),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = CyberSurfaceHighlight,
-                            contentColor = CyberPrimary
+                            containerColor = Slate800,
+                            contentColor = TextPrimary
                         ),
                         shape = RoundedCornerShape(10.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, CyberPrimary)
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Slate600)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Lock,
                             contentDescription = null,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "KEEP LOCKED",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Monospace,
-                            letterSpacing = 1.sp
+                            text = "Keep Workstation Locked",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
 
@@ -358,10 +360,10 @@ fun IncidentAlertModal(
                         onClick = onRemoteShutdown,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(52.dp)
+                            .height(48.dp)
                             .testTag("action_remote_shutdown_btn"),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = CyberAlertRed,
+                            containerColor = Crimson500,
                             contentColor = Color.White
                         ),
                         shape = RoundedCornerShape(10.dp)
@@ -369,15 +371,13 @@ fun IncidentAlertModal(
                         Icon(
                             imageVector = Icons.Default.PowerSettingsNew,
                             contentDescription = null,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "REMOTE SHUTDOWN",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.Monospace,
-                            letterSpacing = 1.sp
+                            text = "Emergency Remote Shutdown",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
@@ -397,15 +397,15 @@ private fun DetailRow(label: String, value: String, isHighlight: Boolean = false
     ) {
         Text(
             text = label,
-            color = CyberTextSecondary,
+            color = TextSecondary,
             fontSize = 13.sp
         )
         Text(
             text = value,
-            color = if (isHighlight) CyberTextPrimary else CyberTextSecondary,
+            color = if (isHighlight) TextPrimary else TextSecondary,
             fontSize = 13.sp,
-            fontWeight = if (isHighlight) FontWeight.Bold else FontWeight.Normal,
-            fontFamily = FontFamily.Monospace
+            fontWeight = if (isHighlight) FontWeight.SemiBold else FontWeight.Normal,
+            fontFamily = if (isHighlight) FontFamily.Default else FontFamily.Monospace
         )
     }
 }

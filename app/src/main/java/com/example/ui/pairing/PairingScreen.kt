@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -78,17 +79,21 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.example.ui.theme.CyberAlertRed
-import com.example.ui.theme.CyberBorder
-import com.example.ui.theme.CyberPrimary
-import com.example.ui.theme.CyberProtectedGreen
-import com.example.ui.theme.CyberSurface
-import com.example.ui.theme.CyberSurfaceHighlight
-import com.example.ui.theme.CyberSurfaceVariant
-import com.example.ui.theme.CyberTextPrimary
-import com.example.ui.theme.CyberTextSecondary
-import com.example.ui.theme.CyberTextTertiary
-import com.example.ui.theme.CyberWarningAmber
+import com.example.ui.theme.Amber400
+import com.example.ui.theme.Cobalt500
+import com.example.ui.theme.Cobalt600
+import com.example.ui.theme.Crimson500
+import com.example.ui.theme.Emerald400
+import com.example.ui.theme.Emerald500
+import com.example.ui.theme.Slate600
+import com.example.ui.theme.Slate700
+import com.example.ui.theme.Slate800
+import com.example.ui.theme.Slate850
+import com.example.ui.theme.Slate900
+import com.example.ui.theme.Slate950
+import com.example.ui.theme.TextPrimary
+import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.TextTertiary
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.MultiFormatReader
 import com.google.zxing.NotFoundException
@@ -138,57 +143,67 @@ fun PairingScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "PAIR LAPTOP AGENT",
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        letterSpacing = 1.sp
-                    )
+                    Column {
+                        Text(
+                            text = "Pair Workstation",
+                            color = TextPrimary,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            letterSpacing = (-0.2).sp
+                        )
+                        Text(
+                            text = "Scan laptop daemon QR code",
+                            color = TextSecondary,
+                            fontSize = 11.sp
+                        )
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack, modifier = Modifier.testTag("pair_back_btn")) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = CyberTextPrimary
+                            tint = TextPrimary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CyberSurface,
-                    titleContentColor = CyberTextPrimary
+                    containerColor = Slate950,
+                    titleContentColor = TextPrimary
                 )
             )
         },
-        containerColor = CyberSurface
+        containerColor = Slate950
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Point camera at the QR code displayed on the TetherGuard laptop daemon console to bootstrap mutual authentication.",
-                color = CyberTextSecondary,
+                text = "Point camera at the QR code displayed in the TetherGuard terminal or settings on your laptop to establish authenticated pairing.",
+                color = TextSecondary,
                 fontSize = 13.sp,
-                lineHeight = 18.sp,
+                lineHeight = 19.sp,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Scanner Viewport Card
+            // Scanner Viewport
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(280.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Black),
-                border = androidx.compose.foundation.BorderStroke(2.dp, if (uiState.validatedData != null) CyberProtectedGreen else CyberPrimary)
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Slate900),
+                border = androidx.compose.foundation.BorderStroke(
+                    1.dp,
+                    if (uiState.validatedData != null) Emerald400 else Slate700
+                )
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     if (hasCameraPermission && uiState.isScanning) {
@@ -205,25 +220,40 @@ fun PairingScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.CameraAlt,
-                                contentDescription = null,
-                                tint = CyberWarningAmber,
-                                modifier = Modifier.size(40.dp)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Surface(
+                                shape = CircleShape,
+                                color = Slate800,
+                                modifier = Modifier.size(52.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.CameraAlt,
+                                        contentDescription = null,
+                                        tint = Amber400,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
                             Text(
-                                text = "Camera Permission Required",
-                                color = CyberTextPrimary,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp
+                                text = "Camera Access Required",
+                                color = TextPrimary,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 15.sp
                             )
-                            Spacer(modifier = Modifier.height(6.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Allow camera permission to scan laptop QR",
+                                color = TextSecondary,
+                                fontSize = 12.sp
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
                             Button(
                                 onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) },
-                                colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary, contentColor = Color.Black)
+                                colors = ButtonDefaults.buttonColors(containerColor = Cobalt600, contentColor = Color.White),
+                                shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text("Grant Permission")
+                                Text("Grant Permission", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
                             }
                         }
                     }
@@ -237,11 +267,11 @@ fun PairingScreen(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(200.dp)
+                                .size(190.dp)
                                 .border(
                                     width = 2.dp,
-                                    color = if (uiState.validatedData != null) CyberProtectedGreen else CyberPrimary.copy(alpha = 0.8f),
-                                    shape = RoundedCornerShape(12.dp)
+                                    color = if (uiState.validatedData != null) Emerald400 else Cobalt500.copy(alpha = 0.7f),
+                                    shape = RoundedCornerShape(16.dp)
                                 )
                         )
                     }
@@ -251,21 +281,20 @@ fun PairingScreen(
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .padding(16.dp),
-                            shape = RoundedCornerShape(8.dp),
-                            color = CyberProtectedGreen.copy(alpha = 0.9f)
+                            shape = RoundedCornerShape(10.dp),
+                            color = Color(0xF010B981)
                         ) {
                             Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "QR CODE VALIDATED",
+                                    text = "QR Code Verified",
                                     color = Color.Black,
                                     fontWeight = FontWeight.Bold,
-                                    fontFamily = FontFamily.Monospace,
-                                    fontSize = 12.sp
+                                    fontSize = 13.sp
                                 )
                             }
                         }
@@ -273,22 +302,22 @@ fun PairingScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             // Error Message
             if (uiState.errorMessage != null) {
                 Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = CyberAlertRed.copy(alpha = 0.15f),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, CyberAlertRed.copy(alpha = 0.5f)),
+                    shape = RoundedCornerShape(10.dp),
+                    color = Color(0x26EF4444),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Crimson500.copy(alpha = 0.5f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Warning, contentDescription = null, tint = CyberAlertRed, modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.Warning, contentDescription = null, tint = Crimson500, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = uiState.errorMessage ?: "",
-                            color = CyberAlertRed,
+                            color = Crimson500,
                             fontSize = 12.sp
                         )
                     }
@@ -300,20 +329,27 @@ fun PairingScreen(
             uiState.validatedData?.let { data ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = CyberSurfaceVariant),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Slate900),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Computer, contentDescription = null, tint = CyberPrimary, modifier = Modifier.size(20.dp))
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = Color(0x1F10B981),
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(Icons.Default.Check, contentDescription = null, tint = Emerald400, modifier = Modifier.size(18.dp))
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "LAPTOP IDENTITY VERIFIED",
-                                color = CyberPrimary,
-                                fontFamily = FontFamily.Monospace,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
+                                text = "Device Authenticated",
+                                color = TextPrimary,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp
                             )
                         }
 
@@ -323,7 +359,7 @@ fun PairingScreen(
                         InfoRow("Laptop Name", data.deviceName)
                         InfoRow("Relay Endpoint", data.relayEndpoint)
                         InfoRow("Handshake Nonce", data.nonce.take(12) + "...")
-                        InfoRow("Key Fingerprint", data.publicKey.take(16) + "...")
+                        InfoRow("Public Key", data.publicKey.take(16) + "...")
 
                         Spacer(modifier = Modifier.height(16.dp))
 
@@ -331,24 +367,22 @@ fun PairingScreen(
                             onClick = { viewModel.confirmPairing() },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp)
+                                .height(48.dp)
                                 .testTag("confirm_pair_btn"),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = CyberProtectedGreen,
-                                contentColor = Color.Black
+                                containerColor = Cobalt600,
+                                contentColor = Color.White
                             ),
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(10.dp),
                             enabled = !uiState.isPairingInProgress
                         ) {
                             if (uiState.isPairingInProgress) {
-                                CircularProgressIndicator(modifier = Modifier.size(20.dp), color = Color.Black, strokeWidth = 2.dp)
+                                CircularProgressIndicator(modifier = Modifier.size(18.dp), color = Color.White, strokeWidth = 2.dp)
                             } else {
-                                Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "ESTABLISH AUTHENTICATED PAIRING",
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = FontFamily.Monospace
+                                    text = "Confirm & Pair Workstation",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 13.sp
                                 )
                             }
                         }
@@ -358,32 +392,32 @@ fun PairingScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Quick Demo Presets / Testing Options
+            // Quick Demo Presets
             Text(
                 text = "HACKATHON QUICK-PAIR PRESETS",
-                color = CyberTextTertiary,
-                fontFamily = FontFamily.Monospace,
+                color = TextSecondary,
                 fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(Alignment.Start)
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 0.5.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedButton(
                     onClick = { viewModel.loadDemoPayload("macbook") },
                     modifier = Modifier
                         .weight(1f)
                         .testTag("pair_preset_macbook"),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = CyberPrimary),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
                 ) {
-                    Text("CHRIZ-LAPTOP", fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                    Text("CHRIZ-LAPTOP", fontSize = 12.sp, fontWeight = FontWeight.Medium)
                 }
 
                 OutlinedButton(
@@ -391,11 +425,11 @@ fun PairingScreen(
                     modifier = Modifier
                         .weight(1f)
                         .testTag("pair_preset_thinkpad"),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = CyberPrimary),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
                 ) {
-                    Text("THINKPAD-X1", fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                    Text("THINKPAD-X1", fontSize = 12.sp, fontWeight = FontWeight.Medium)
                 }
             }
 
@@ -406,13 +440,13 @@ fun PairingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("manual_qr_input_btn"),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = CyberTextSecondary),
-                border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
             ) {
-                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(16.dp))
+                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(15.dp))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Enter QR Payload Manually / Paste JSON", fontSize = 12.sp)
+                Text("Enter QR Payload Manually", fontSize = 12.sp)
             }
         }
     }
@@ -423,10 +457,9 @@ fun PairingScreen(
             onDismissRequest = { showManualInputDialog = false },
             title = {
                 Text(
-                    text = "MANUAL QR BOOTSTRAP",
-                    fontFamily = FontFamily.Monospace,
+                    text = "Manual QR Payload",
                     fontWeight = FontWeight.Bold,
-                    color = CyberPrimary,
+                    color = TextPrimary,
                     fontSize = 16.sp
                 )
             },
@@ -434,21 +467,22 @@ fun PairingScreen(
                 Column {
                     Text(
                         text = "Paste the JSON pairing payload from your laptop daemon terminal:",
-                        color = CyberTextSecondary,
+                        color = TextSecondary,
                         fontSize = 12.sp
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     OutlinedTextField(
                         value = inputJson,
                         onValueChange = { inputJson = it },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(140.dp),
+                            .height(130.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = CyberPrimary,
-                            unfocusedBorderColor = CyberBorder
+                            focusedBorderColor = Cobalt500,
+                            unfocusedBorderColor = Slate700
                         ),
-                        placeholder = { Text("{\"device_id\":\"TG-8842\", ...}", color = CyberTextTertiary) }
+                        placeholder = { Text("{\"device_id\":\"TG-8842\", ...}", color = TextTertiary, fontSize = 12.sp) },
+                        shape = RoundedCornerShape(8.dp)
                     )
                 }
             },
@@ -458,17 +492,23 @@ fun PairingScreen(
                         viewModel.onQrScanned(inputJson)
                         showManualInputDialog = false
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = CyberPrimary, contentColor = Color.Black)
+                    colors = ButtonDefaults.buttonColors(containerColor = Cobalt600, contentColor = Color.White),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text("VALIDATE & PAIR")
+                    Text("Validate & Pair", fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {
-                OutlinedButton(onClick = { showManualInputDialog = false }) {
-                    Text("CANCEL")
+                OutlinedButton(
+                    onClick = { showManualInputDialog = false },
+                    shape = RoundedCornerShape(8.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
+                ) {
+                    Text("Cancel", color = TextSecondary)
                 }
             },
-            containerColor = CyberSurface
+            containerColor = Slate900,
+            shape = RoundedCornerShape(16.dp)
         )
     }
 }
@@ -481,8 +521,8 @@ private fun InfoRow(label: String, value: String) {
             .padding(vertical = 3.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = label, color = CyberTextTertiary, fontSize = 12.sp)
-        Text(text = value, color = CyberTextPrimary, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+        Text(text = label, color = TextTertiary, fontSize = 12.sp)
+        Text(text = value, color = TextPrimary, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
     }
 }
 

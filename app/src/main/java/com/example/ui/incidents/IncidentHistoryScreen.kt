@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PowerSettingsNew
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Usb
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.Warning
@@ -62,18 +64,20 @@ import com.example.data.models.IncidentResponseStatus
 import com.example.data.models.IncidentSeverity
 import com.example.data.models.IncidentType
 import com.example.ui.components.SeverityBadge
-import com.example.ui.theme.CyberAlertRed
-import com.example.ui.theme.CyberAlertRedContainer
-import com.example.ui.theme.CyberBorder
-import com.example.ui.theme.CyberPrimary
-import com.example.ui.theme.CyberProtectedGreen
-import com.example.ui.theme.CyberSurface
-import com.example.ui.theme.CyberSurfaceHighlight
-import com.example.ui.theme.CyberSurfaceVariant
-import com.example.ui.theme.CyberTextPrimary
-import com.example.ui.theme.CyberTextSecondary
-import com.example.ui.theme.CyberTextTertiary
-import com.example.ui.theme.CyberWarningAmber
+import com.example.ui.theme.Amber500
+import com.example.ui.theme.Cobalt500
+import com.example.ui.theme.Cobalt600
+import com.example.ui.theme.Crimson500
+import com.example.ui.theme.Emerald400
+import com.example.ui.theme.Emerald500
+import com.example.ui.theme.Slate700
+import com.example.ui.theme.Slate800
+import com.example.ui.theme.Slate850
+import com.example.ui.theme.Slate900
+import com.example.ui.theme.Slate950
+import com.example.ui.theme.TextPrimary
+import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.TextTertiary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,20 +109,27 @@ fun IncidentHistoryScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "INCIDENT AUDIT LOG",
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        letterSpacing = 1.sp
-                    )
+                    Column {
+                        Text(
+                            text = "Incident Audit Trail",
+                            color = TextPrimary,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            letterSpacing = (-0.2).sp
+                        )
+                        Text(
+                            text = "${incidents.size} events logged",
+                            color = TextSecondary,
+                            fontSize = 11.sp
+                        )
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack, modifier = Modifier.testTag("history_back_btn")) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = CyberTextPrimary
+                            tint = TextPrimary
                         )
                     }
                 },
@@ -128,18 +139,18 @@ fun IncidentHistoryScreen(
                             Icon(
                                 imageVector = Icons.Default.DeleteSweep,
                                 contentDescription = "Clear History",
-                                tint = CyberTextSecondary
+                                tint = TextSecondary
                             )
                         }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = CyberSurface,
-                    titleContentColor = CyberTextPrimary
+                    containerColor = Slate950,
+                    titleContentColor = TextPrimary
                 )
             )
         },
-        containerColor = CyberSurface
+        containerColor = Slate950
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -153,31 +164,36 @@ fun IncidentHistoryScreen(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                val filters = listOf("ALL", "CRITICAL", "USB", "PHYSICAL")
-                items(filters) { filter ->
+                val filters = listOf(
+                    "ALL" to "All Events",
+                    "CRITICAL" to "High & Critical",
+                    "USB" to "USB Hardware",
+                    "PHYSICAL" to "Perimeter Sensors"
+                )
+                items(filters) { (key, label) ->
                     FilterChip(
-                        selected = selectedFilter == filter,
-                        onClick = { selectedFilter = filter },
+                        selected = selectedFilter == key,
+                        onClick = { selectedFilter = key },
                         label = {
                             Text(
-                                text = filter,
-                                fontFamily = FontFamily.Monospace,
+                                text = label,
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.Medium
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = CyberPrimary,
-                            selectedLabelColor = Color.Black,
-                            containerColor = CyberSurfaceVariant,
-                            labelColor = CyberTextSecondary
+                            selectedContainerColor = Cobalt600,
+                            selectedLabelColor = Color.White,
+                            containerColor = Slate900,
+                            labelColor = TextSecondary
                         ),
                         border = FilterChipDefaults.filterChipBorder(
                             enabled = true,
-                            selected = selectedFilter == filter,
-                            borderColor = CyberBorder,
-                            selectedBorderColor = CyberPrimary
-                        )
+                            selected = selectedFilter == key,
+                            borderColor = Slate700,
+                            selectedBorderColor = Cobalt500
+                        ),
+                        shape = RoundedCornerShape(10.dp)
                     )
                 }
             }
@@ -190,24 +206,31 @@ fun IncidentHistoryScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Default.History,
-                            contentDescription = null,
-                            tint = CyberTextTertiary,
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Surface(
+                            shape = CircleShape,
+                            color = Slate900,
+                            modifier = Modifier.size(56.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.History,
+                                    contentDescription = null,
+                                    tint = TextTertiary,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(14.dp))
                         Text(
-                            text = "NO INCIDENTS RECORDED",
-                            color = CyberTextSecondary,
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
+                            text = "No Incidents in Log",
+                            color = TextPrimary,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Workstation telemetry and tamper audits will appear here.",
-                            color = CyberTextTertiary,
+                            color = TextSecondary,
                             fontSize = 12.sp
                         )
                     }
@@ -216,7 +239,7 @@ fun IncidentHistoryScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(filteredList, key = { it.id }) { incident ->
@@ -233,17 +256,18 @@ fun IncidentHistoryScreen(
         }
     }
 
-    // Detail Bottom Sheet
+    // Detail Inspector Bottom Sheet
     selectedIncident?.let { incident ->
         ModalBottomSheet(
             onDismissRequest = { selectedIncident = null },
             sheetState = sheetState,
-            containerColor = CyberSurfaceVariant
+            containerColor = Slate900,
+            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -251,87 +275,99 @@ fun IncidentHistoryScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "INCIDENT AUDIT LOG",
-                        color = CyberPrimary,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
+                        text = "INCIDENT AUDIT RECORD",
+                        color = TextSecondary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.5.sp
                     )
                     SeverityBadge(severity = incident.severity)
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
                     text = incident.eventType.displayName,
-                    color = CyberTextPrimary,
+                    color = TextPrimary,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                DetailItem(title = "Timestamp", detail = incident.timestamp)
-                DetailItem(title = "Device Affected", detail = incident.deviceId)
-                DetailItem(title = "Hardware Item", detail = incident.deviceName)
-                if (incident.vendorId != null) {
-                    DetailItem(title = "VID / PID", detail = "${incident.vendorId} / ${incident.productId}")
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Slate850),
+                    shape = RoundedCornerShape(12.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
+                ) {
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        DetailItem(title = "Timestamp", detail = incident.timestamp)
+                        DetailItem(title = "Device Affected", detail = incident.deviceId)
+                        DetailItem(title = "Hardware Item", detail = incident.deviceName)
+                        if (incident.vendorId != null) {
+                            DetailItem(title = "VID / PID", detail = "${incident.vendorId} / ${incident.productId}")
+                        }
+                        DetailItem(
+                            title = "Evidence Capture",
+                            detail = if (incident.evidenceAvailable) "Frame Stored (Base64)" else "None"
+                        )
+                        DetailItem(title = "Response State", detail = incident.responseStatus.displayLabel)
+                    }
                 }
-                DetailItem(title = "Evidence Status", detail = if (incident.evidenceAvailable) "Frame Available (Base64 stored)" else "None")
-                DetailItem(title = "Remediation", detail = incident.responseStatus.displayLabel)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Surface(
                         modifier = Modifier
                             .weight(1f)
+                            .height(46.dp)
                             .clickable {
                                 onKeepLocked(incident.id)
                                 selectedIncident = null
                             },
-                        shape = RoundedCornerShape(8.dp),
-                        color = CyberSurfaceHighlight,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, CyberPrimary)
+                        shape = RoundedCornerShape(10.dp),
+                        color = Slate800,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Cobalt500.copy(alpha = 0.5f))
                     ) {
                         Row(
-                            modifier = Modifier.padding(12.dp),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Default.Lock, contentDescription = null, tint = CyberPrimary, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Lock, contentDescription = null, tint = Cobalt500, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("LOCK", color = CyberPrimary, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                            Text("Confirm Lock", color = Cobalt500, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                         }
                     }
 
                     Surface(
                         modifier = Modifier
                             .weight(1f)
+                            .height(46.dp)
                             .clickable {
                                 selectedIncident = null
                                 onRemoteShutdown()
                             },
-                        shape = RoundedCornerShape(8.dp),
-                        color = CyberAlertRedContainer,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, CyberAlertRed)
+                        shape = RoundedCornerShape(10.dp),
+                        color = Color(0x26EF4444),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Crimson500.copy(alpha = 0.4f))
                     ) {
                         Row(
-                            modifier = Modifier.padding(12.dp),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Default.PowerSettingsNew, contentDescription = null, tint = CyberAlertRed, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.PowerSettingsNew, contentDescription = null, tint = Crimson500, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("SHUTDOWN", color = CyberAlertRed, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                            Text("Remote Shutdown", color = Crimson500, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
@@ -347,9 +383,9 @@ private fun IncidentHistoryItem(
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .testTag("incident_item_${incident.id}"),
-        colors = CardDefaults.cardColors(containerColor = CyberSurfaceVariant),
-        shape = RoundedCornerShape(10.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, CyberBorder)
+        colors = CardDefaults.cardColors(containerColor = Slate900),
+        shape = RoundedCornerShape(14.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Slate700)
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Row(
@@ -358,28 +394,32 @@ private fun IncidentHistoryItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    val icon = when (incident.eventType) {
-                        IncidentType.USB_INSERT, IncidentType.SUSPICIOUS_DEVICE -> Icons.Default.Usb
-                        IncidentType.LID_OPEN, IncidentType.PERIMETER_MOTION -> Icons.Default.Visibility
-                        else -> Icons.Default.Warning
+                    val (icon, iconColor) = when (incident.eventType) {
+                        IncidentType.USB_INSERT, IncidentType.SUSPICIOUS_DEVICE -> Icons.Default.Usb to Cobalt500
+                        IncidentType.LID_OPEN, IncidentType.PERIMETER_MOTION -> Icons.Default.Visibility to Amber500
+                        else -> Icons.Default.Warning to Crimson500
                     }
-                    val iconColor = when (incident.severity) {
-                        IncidentSeverity.CRITICAL, IncidentSeverity.HIGH -> CyberAlertRed
-                        IncidentSeverity.MEDIUM -> CyberWarningAmber
-                        IncidentSeverity.LOW -> CyberPrimary
+
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = Slate850,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                tint = iconColor,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     }
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = iconColor,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = incident.eventType.displayName,
-                        color = CyberTextPrimary,
+                        color = TextPrimary,
                         fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
 
@@ -389,13 +429,12 @@ private fun IncidentHistoryItem(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Target: ${incident.deviceName}",
-                color = CyberTextSecondary,
-                fontSize = 12.sp,
-                fontFamily = FontFamily.Monospace
+                text = "Target Hardware: ${incident.deviceName}",
+                color = TextSecondary,
+                fontSize = 12.sp
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -404,7 +443,7 @@ private fun IncidentHistoryItem(
             ) {
                 Text(
                     text = incident.timestamp,
-                    color = CyberTextTertiary,
+                    color = TextTertiary,
                     fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace
                 )
@@ -413,8 +452,8 @@ private fun IncidentHistoryItem(
                     if (incident.evidenceAvailable) {
                         Surface(
                             shape = RoundedCornerShape(4.dp),
-                            color = CyberSurfaceHighlight,
-                            modifier = Modifier.padding(end = 6.dp)
+                            color = Slate800,
+                            modifier = Modifier.padding(end = 8.dp)
                         ) {
                             Row(
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
@@ -423,16 +462,15 @@ private fun IncidentHistoryItem(
                                 Icon(
                                     imageVector = Icons.Default.CameraAlt,
                                     contentDescription = null,
-                                    tint = CyberPrimary,
+                                    tint = TextSecondary,
                                     modifier = Modifier.size(11.dp)
                                 )
-                                Spacer(modifier = Modifier.width(3.dp))
+                                Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text = "EVIDENCE",
-                                    color = CyberPrimary,
-                                    fontSize = 9.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = FontFamily.Monospace
+                                    text = "Evidence",
+                                    color = TextSecondary,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Medium
                                 )
                             }
                         }
@@ -441,13 +479,12 @@ private fun IncidentHistoryItem(
                     Text(
                         text = incident.responseStatus.displayLabel,
                         color = when (incident.responseStatus) {
-                            IncidentResponseStatus.LOCKED -> CyberProtectedGreen
-                            IncidentResponseStatus.SHUTDOWN -> CyberAlertRed
-                            else -> CyberTextSecondary
+                            IncidentResponseStatus.LOCKED -> Emerald400
+                            IncidentResponseStatus.SHUTDOWN -> Crimson500
+                            else -> TextSecondary
                         },
                         fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = FontFamily.Monospace
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
@@ -458,7 +495,7 @@ private fun IncidentHistoryItem(
 @Composable
 private fun DetailItem(title: String, detail: String) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        Text(text = title, color = CyberTextTertiary, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
-        Text(text = detail, color = CyberTextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+        Text(text = title, color = TextTertiary, fontSize = 11.sp)
+        Text(text = detail, color = TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
     }
 }
